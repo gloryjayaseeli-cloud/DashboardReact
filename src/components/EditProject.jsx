@@ -26,8 +26,8 @@ function EditProject() {
         'not_started': "Not Started"
     }
 
-    const [updateTask, { data: TaskDetails, Taskloading, Taskerror }] = useApi();
-    const [DeleteTask, { data: DeletedTask, DeleteTaskloading, DeleteTaskerror }] = useApi();
+    const [updateTask, { data: TaskDetails, loading:Taskloading, error:Taskerror }] = useApi();
+    const [DeleteTask, { data: DeletedTask, loading:DeleteTaskloading, error:DeleteTaskerror }] = useApi();
     const [showModal, setShowModal] = useState(false)
     const { projectID, ProjectName } = useParams();
 
@@ -60,6 +60,11 @@ function EditProject() {
 
     }, [error])
 
+      useEffect(() => {
+
+        Taskerror  && handleApiError("task is not edited successfully")
+
+    }, [Taskerror])
 
     useEffect(() => {
         setNewOneTask({
