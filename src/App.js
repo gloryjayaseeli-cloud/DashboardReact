@@ -1,25 +1,70 @@
 import logo from './logo.svg';
 import './App.css';
+import AuthPage from "./components/AuthPage"
+import ProjectDashboard from './components/ProjectDashboard';
+import ViewProject from './components/ViewProject';
+import AddTaskPage from './components/AddTaskPage';
+import CreateProject from "./components/CreateProject"
+import EditProject from './components/EditProject';
+import { useState } from 'react';
+import NavBar from './components/NavBar';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import GitHubCallback from "./components/GitHubCallback"
+import { useAuth } from './context/AuthContext';
+import { AuthProvider } from './components/AuthProvider';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [route, setRoute] = useState('home');
+    const AppContent = () => {
+        const { user } = useAuth();
+
+        const isProtectedRoute = ['dashboard', 'projects', 'tasks'].includes(route);
+        if (isProtectedRoute && !user) {
+            return <AuthPage />;
+        }
+        return (
+            <>
+
+                <BrowserRouter>
+                    <Routes>
+
+                        <Route
+                            path="/login/github/callback"
+                            element={<GitHubCallback />}
+                        />
+
+                        <Route path="/" element={<AuthPage />} />
+                        <Route path="/login" element={<AuthPage />} />
+                        <Route path="/dashboard" element={<ProjectDashboard />} />
+                        <Route path="/projects" element={<CreateProject />} />
+                        <Route path="/AddTaskPage/:projectID/:ProjectName" element={<AddTaskPage />} />
+                        <Route path="/viewProject/:projectID" element={<ViewProject />} />
+                        <Route path="/editProject/:projectID" element={<EditProject />} />
+
+                    </Routes>
+                </BrowserRouter>
+
+            </>
+        );
+    };
+
+    return (
+        <AuthProvider>
+            <div className="min-h-screen bg-gray-100 font-sans">
+                <NavBar
+                    user=""
+                />
+                <main >
+                    <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                        <div className="px-4 py-6 sm:px-0">
+                            <AppContent />
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </AuthProvider>
+    );
+
 }
 
 export default App;
