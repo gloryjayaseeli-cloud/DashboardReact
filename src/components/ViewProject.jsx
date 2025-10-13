@@ -1,20 +1,23 @@
 import { React, useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
-import useApi from '../services/ApiService';
 import Popup from './popup';
-import { useAuth } from '../context/AuthContext';
-import config from '../config/config';
+import {
+    viewProjectDetails, selectProjectDetails,
+    selectProjectsStatus
+} from '../features/project';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUserRole } from '../features/user';
 
 function ViewProject() {
-    const {role}=useAuth()
+    const role = useSelector(selectUserRole)
+
     const { projectID } = useParams();
     const [projectDetails, setProjectDetails] = useState();
     const [tasks, setTasks] = useState([]);
     const [selectedTask, setSelectedTask] = useState({});
     const [showModal, setShowModal] = useState(false)
-
-
-    const [getProjectDetails, { data: projectDetailsData, loading, error }] = useApi();
+    const projectDetailsList = useSelector(selectProjectDetails)
+    const dispatch = useDispatch();
     const StatusObj = {
         'completed': "Completed",
         'in_progress': "In Progress",
@@ -40,25 +43,24 @@ function ViewProject() {
         setSelectedTask(task);
         setShowModal(!showModal)
     };
-    useEffect(()=>{
-         window.scrollTo({
+    useEffect(() => {
+        window.scrollTo({
             top: 0,
             behavior: 'smooth'
         });
-    },[])
-   
-   
+    }, [])
+
+
     useEffect(() => {
         if (projectID) {
-            const API_URL = `${config.api.baseUrl}/projects/${projectID}/`;
-            getProjectDetails(API_URL, "GET");
+            dispatch(viewProjectDetails(projectID))
         }
-        
-    }, [projectID, getProjectDetails, showModal]);
+
+    }, [projectID, showModal]);
     useEffect(() => {
-        setProjectDetails(projectDetailsData?.data)
-        setTasks(projectDetailsData?.data?.tasks)
-    }, [projectDetailsData])
+        setProjectDetails(projectDetailsList?.data)
+        setTasks(projectDetailsList?.data?.tasks)
+    }, [projectDetailsList])
     const navigate = useNavigate()
     return (
         <div>
@@ -75,25 +77,25 @@ function ViewProject() {
 
                 <div className="card details-card shadow-sm">
                     <div className="card-body p-4">
-   
+
                         <div className="d-flex justify-content-between align-items-start mb-4">
                             <div>
                                 <h1 className="h2 mb-1">{projectDetails?.name}</h1>
                                 <p className="text-muted">{projectDetails?.description}</p>
                             </div>
-                          {role==="admin" && <button className="btn btn-outline-secondary flex-shrink-0" onClick={() => { navigate(`/editProject/${projectID}`) }}>
+                            {role === "admin" && <button className="btn btn-outline-secondary flex-shrink-0" onClick={() => { navigate(`/editProject/${projectID}`) }}>
                                 <i className="bi bi-pencil-square me-2"></i>Edit Project
                             </button>}
                         </div>
                         <hr />
 
-                         {tasks?.length > 0 ? (
-                        <div className="col-12">
-                            <label className="form-label">Project Tasks</label>
-                           
+                        {tasks?.length > 0 ? (
+                            <div className="col-12">
+                                <label className="form-label">Project Tasks</label>
+
                                 <div className="list-group mb-3">
                                     {tasks?.map(task => (
-                                        <a href="#" key={task.id} onClick={(e) => {  handleTaskClick(task); }} className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center ${selectedTask && selectedTask.id === task.id ? 'active' : ''}`}>
+                                        <a href="#" key={task.id} onClick={(e) => { handleTaskClick(task); }} className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center ${selectedTask && selectedTask.id === task.id ? 'active' : ''}`}>
                                             {task.description}
                                             <div>
                                                 <span className={`badge rounded-pill status-badge ${getStatusBadgeClass(task.status)}`}>{StatusObj[task.status]}</span>
@@ -102,22 +104,22 @@ function ViewProject() {
                                         </a>
                                     ))}
                                 </div>
-                                  </div>
-                            )
-                                :
-                                <>{role==="admin"?
-                                    <div>No task added, please edit the project to add tasks</div>:
-                                    <div>You dont have any task in this project</div>
-                                }
-                                </>
-                                    
-                                    
+                            </div>
+                        )
+                            :
+                            <>{role === "admin" ?
+                                <div>No task added, please edit the project to add tasks</div> :
+                                <div>You dont have any task in this project</div>
                             }
-                      
+                            </>
+
+
+                        }
+
                     </div>
                 </div>
             </main>
-            <Popup show={showModal} setShowModal={setShowModal} task={selectedTask} action={role!=="admin"? "Edit":"View"} />
+            <Popup show={showModal} setShowModal={setShowModal} task={selectedTask} action={role !== "admin" ? "Edit" : "View"} />
         </div>
 
     )

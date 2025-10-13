@@ -2,14 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
 import { FaGoogle, FaGithub, FaFacebook } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import useApi from '../services/ApiService';
-import { useAuth } from '../context/AuthContext';
+
 import AlertMessage from './AlertMessage';
-import config from '../config/config';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser, registerUser } from '../features/auth';
+import { fetchUser, selectUserProfile, selectUserStatus, selectUserError } from '../features/user';
+import { selectIsAuthenticated, selectAuthStatus } from '../features/auth';
 
 const AuthPage = () => {
-  const { user, login, logout } = useAuth();
-
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state?.auth?.token);
+  const isAuthenticated = useSelector((state) => state?.auth?.isAuthenticated);
+  const status = useSelector((state) => state?.auth?.status);
+  const error = useSelector((state) => state?.auth?.error)
+  const userError = useSelector(selectUserError)
+  const userStatus = useSelector(selectUserStatus)
+  const userProfile = useSelector(selectUserProfile);
   const [isSignUp, setIsSignUp] = useState(false);
   const [username, setUserName] = useState("")
   const [alert, setAlert] = useState({
@@ -23,52 +31,31 @@ const AuthPage = () => {
     email: "",
     password: ""
   })
-  const [token, setToken] = useState(localStorage.getItem("token"))
-  const [error, setError] = useState("")
+  const [actualtoken, setActualToken] = useState(localStorage.getItem("token"))
+  const [errors, setError] = useState("")
   const [loading, setLoading] = useState("")
   const navigate = useNavigate()
 
   const gitUrl = process.env.REACT_APP_GITHUB_AUTH_URL
-  const [loginuser, { data: loggedinUser, loading: loginloading, error: loginerror }] = useApi();
+  useEffect(() => {
+    setError(error)
+    console.log(error)
+    error && handleApiError()
+  }, [error, userError])
+
 
   useEffect(() => {
-    const fetchUser = async () => {
-      if (token) {
-        const API = `${config.api.baseUrl}/users/me/`
-
-        try {
-          loginuser(API, "GET")
-
-        } catch (error) {
-          setError(error)
-          handleApiError();
-          localStorage.removeItem('token');
-          setToken(null);
-          setUserName(null);
-        }
-      }
-      setLoading(false);
-    };
-
-    fetchUser();
-  }, [token]);
+    if (isAuthenticated) {
+      handleApiSuccess()
+      navigate('/dashboard');
+    }
+  }, [selectUserProfile, isAuthenticated]);
 
   useEffect(() => {
-    setError(loginerror)
-
-  }, [loginerror])
-
-  useEffect(() => {
-    localStorage.setItem("role", loggedinUser?.profile?.role)
-    localStorage.setItem("userName", loggedinUser?.username)
-    setUserName(loggedinUser?.username)
-    login(loggedinUser?.username, token, loggedinUser?.profile?.role)
-    loggedinUser && handleApiSuccess()
-
-    loggedinUser?.username && navigate("/dashboard")
-
-  }, [loggedinUser])
-
+    if (isAuthenticated && userStatus === 'idle') {
+      dispatch(fetchUser());
+    }
+  }, [isAuthenticated, userStatus, dispatch]);
 
   const toggleForm = (e) => {
     e.preventDefault();
@@ -88,40 +75,19 @@ const AuthPage = () => {
   const handleSubmit = async (event) => {
 
     try {
+      isSignUp ? dispatch(registerUser({ username: userDetails?.username, password: userDetails?.password, email: userDetails?.email }))
+        :
+        dispatch(loginUser({ username: userDetails?.username, password: userDetails?.password }));
 
-      const API_URL = isSignUp ? `${config.api.baseUrl}/signup/` : `${config.api.baseUrl}/login/`
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: {
-
-          'Content-Type': 'application/json',
-        },
-
-        body: isSignUp ? JSON.stringify({ username: userDetails?.username, password: userDetails?.password, email: userDetails?.email }) :
-          JSON.stringify({ username: userDetails?.username, password: userDetails?.password }),
-      });
-
-      if (!response.ok) {
-
-        const errorData = await response.json();
-        throw new Error(errorData.non_field_errors?.[0] || 'Login failed. Please check your credentials.');
-      }
-
-      const data = await response.json();
-      handleApiSuccess()
-      localStorage.setItem("token", data?.access)
-
-      setToken(data.access);
     } catch (err) {
       localStorage.setItem("token", "")
 
-      handleApiError()
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
       });
       setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
-      setToken('');
+      handleApiError()
     } finally {
       setLoading(false);
     }
@@ -149,7 +115,9 @@ const AuthPage = () => {
     setAlert({ ...alert, show: false });
   };
 
-
+  if (userStatus === 'loading') {
+    return <p>Loading profile...</p>;
+  }
   return (<>
 
     {alert.show && (

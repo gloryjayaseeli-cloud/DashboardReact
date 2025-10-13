@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import useApi from '../services/ApiService';
 import { useParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import config from '../config/config';
+import { selectUserRole } from '../features/user';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteTask, updateTask } from '../features/task';
 
 
 const Modal = ({ show, onHide, children }) => {
@@ -14,7 +14,7 @@ const Modal = ({ show, onHide, children }) => {
         <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
             <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
-                   <button
+                    <button
                         type="button"
                         aria-label="Close"
                         onClick={onHide}
@@ -54,7 +54,7 @@ Modal.Footer = ({ children }) => <div className="modal-footer">{children}</div>;
 
 
 function Popup(props) {
-    const { role } = useAuth()
+    const role = useSelector(selectUserRole)
     const [editordata, setEditorData] = useState()
     const [showModal, setShowModal] = useState(false);
     const [data, setData] = useState()
@@ -63,6 +63,7 @@ function Popup(props) {
     const setTask = props?.setNewOneTask
     const user = localStorage.getItem("userName")
     const { projectID } = useParams();
+    const dispatch = useDispatch()
     const StatusObj = {
         'completed': "Completed",
         'in_progress': "In Progress",
@@ -75,8 +76,7 @@ function Popup(props) {
         props.setShowModal(false)
     }
     const handleShow = () => setShowModal(true);
-    const [updateTask, { data: TaskDetails, Taskloading, Taskerror }] = useApi();
-    const [DeleteTask, { data: DeletedTask, DeleteTaskloading, DeleteTaskerror }] = useApi();
+
     useEffect(() => {
         setShowModal(props.show)
         setData(props.task)
@@ -86,19 +86,22 @@ function Popup(props) {
 
 
     const EditorhandleTaskUpdate = (e) => {
-       if (projectID) {
-            const API_URL = `${config.api.baseUrl}/projects/${projectID}/tasks/${editordata?.id}/`;
-            updateTask(API_URL, "PUT", editordata);
+        if (projectID) {
+            // const API_URL = `${config.api.baseUrl}/projects/${projectID}/tasks/${editordata?.id}/`;
+            // updateTask(API_URL, "PUT", editordata);
+            dispatch(updateTask({ projectId: projectID, taskId: editordata?.id, taskData: editordata }))
+
+
         }
         setShowModal(!showModal)
         props.setShowModal(!props.show)
     }
 
     const EditorhandleDelete = (e) => {
-      
+
         if (projectID) {
-            const API_URL = `${config.api.baseUrl}/projects/${projectID}/tasks/${editordata?.id}/`;
-            DeleteTask(API_URL, "DELETE", editordata);
+            dispatch(deleteTask({ projectId: projectID, taskId: editordata?.id }))
+
         }
         setShowModal(!showModal)
         props.setShowModal(!props.show)

@@ -1,17 +1,26 @@
 import React from 'react'
-import { useAuth } from '../context/AuthContext';
-
-
+import { selectUsername, selectUserRole } from '../features/user';
+import { useSelector } from "react-redux"
+import { useDispatch } from 'react-redux';
+import { persistor } from '../store';
 
 function NavBar(props) {
+    const dispatch = useDispatch();
 
-    const { user, login, logout } = useAuth();
-    const token = localStorage.getItem("token")
-    const role=localStorage.getItem("role")
-   
+    const user = useSelector(selectUsername);
+    const role = useSelector(selectUserRole);
 
     const handleLogOut = () => {
-        logout();
+        localStorage.removeItem('token');
+        localStorage.setItem("role", "");
+        localStorage.setItem("userName", "")
+        window.location.href = '/login';
+
+
+        dispatch({ type: 'USER_LOGOUT' });
+        persistor.purge().then(() => {
+            console.log('Persisted state has been purged.');
+        });
 
     }
 
@@ -34,7 +43,9 @@ function NavBar(props) {
                             <button className={`bgbtn2`} onClick={handleLogOut}>Logout</button>
                         </>
                     ) : (
-                        <button className={`bgbtn2`} onClick={() => login(user, token,role)}>Login</button>
+                        <button className={`bgbtn2`} onClick={() => {
+                            window.location.href("/")
+                        }}>Login</button>
                     )}
                 </div>
 

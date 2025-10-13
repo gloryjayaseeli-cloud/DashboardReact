@@ -1,23 +1,37 @@
 import { useEffect, useState } from 'react'
-import useApi from '../services/ApiService';
 import { useNavigate, useParams } from 'react-router-dom';
 import Popup from './popup';
-import { useAuth } from '../context/AuthContext';
-import config from '../config/config';
 import AlertMessage from './AlertMessage';
 import { Spinner } from 'react-bootstrap';
-
+import {
+    viewProjectDetails, selectProjectDetails,
+    selectProjectsStatus,
+    selectProjectError,
+    updateProject
+} from '../features/project';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUserRole } from '../features/user';
+import { React } from 'react';
+import { createTask, deleteTask, selectAllTasks, updateTask, selectTaskError, selectTasksStatus } from '../features/task';
 
 function EditProject() {
-    const { user } = useAuth();
+    const user = localStorage.getItem("userName")
     const [tasks, setTasks] = useState([]);
     const [action, setAction] = useState()
     const [selectedTask, setSelectedTask] = useState(null);
     const navigate = useNavigate()
     const [projectDetails, setProjectDetails] = useState()
-    const [getProjectDetails, { data: projectDetailsData, loading, error }] = useApi();
+    // const [getProjectDetails, { data: projectDetailsData, loading, error }] = useApi();
     const [Selectedproject, setSelectedproject] = useState({})
     const [method, setMethod] = useState("")
+    const projectDetailsList = useSelector(selectProjectDetails)
+    const dispatch = useDispatch();
+    const Taskerror = useSelector(selectTaskError)
+    const ProjectError = useSelector(selectProjectError)
+    const TaskStatus = useSelector(selectTasksStatus)
+    const ProjectStatus = useSelector(selectProjectsStatus)
+    const loading = TaskStatus === "loading" || ProjectStatus === "loading"
+    const [TaskStateList, setTaskStateList] = useState(projectDetailsList?.data?.tasks)
     const StatusObj = {
         'completed': "Completed",
         'in_progress': "In Progress",
@@ -25,12 +39,10 @@ function EditProject() {
         'new': "New",
         'not_started': "Not Started"
     }
-
-    const [updateTask, { data: TaskDetails, loading:Taskloading, error:Taskerror }] = useApi();
-    const [DeleteTask, { data: DeletedTask, loading:DeleteTaskloading, error:DeleteTaskerror }] = useApi();
     const [showModal, setShowModal] = useState(false)
     const { projectID, ProjectName } = useParams();
-
+    const taskList = useSelector(selectAllTasks)
+    const [lastAction, setLastAction] = useState(null);
     const [NewOnetask, setNewOneTask] = useState({
         id: "",
         project: ProjectName,
@@ -39,8 +51,8 @@ function EditProject() {
         status: "new",
         owner: user
     })
-    const [createTask, { data: NewTask, NewTaskloading, NewTaskerror }] = useApi();
-
+    const taskdet = useSelector(selectAllTasks)
+    const TaskError = useSelector(selectTaskError);
 
     const [alert, setAlert] = useState({
         show: false,
@@ -49,22 +61,36 @@ function EditProject() {
     });
     useEffect(() => {
 
-        projectDetailsData && method === "PUT" && handleApiSuccess("project edited successfully")
-
-
-    }, [projectDetailsData])
+        projectDetailsList && method === "PUT" && handleApiSuccess("project edited successfully")
+        scrollToTop()
+        setTaskStateList(taskList)
+    }, [projectDetailsList, taskList])
 
     useEffect(() => {
 
-        error && method === "PUT" && handleApiError("project is not edited successfully")
+        projectDetails && method === "PUT" && handleApiError("project is not edited successfully")
+        scrollToTop()
+    }, [ProjectError])
 
-    }, [error])
+    useEffect(() => {
+        if (lastAction) {
+            handleApiSuccess(`Task ${lastAction} successfully!`);
+            scrollToTop()
+            setShowModal(false);
+            setLastAction(null);
+            setTaskStateList(prev => {
+                return [
 
-      useEffect(() => {
+                    ...taskList
+                ]
+            })
+        } else if (TaskStatus === 'failed' && lastAction) {
+            handleApiError(TaskError || `Could not ${lastAction} task.`);
+            scrollToTop()
+            setLastAction(null);
+        }
+    }, [TaskStatus, TaskError, taskList]);
 
-        Taskerror  && handleApiError("task is not edited successfully")
-
-    }, [Taskerror])
 
     useEffect(() => {
         setNewOneTask({
@@ -75,14 +101,14 @@ function EditProject() {
             status: "new",
             owner: user
         })
-    }, [NewTask])
+    }, [taskList])
 
 
 
     useEffect(() => {
-        setProjectDetails(projectDetailsData?.data)
-        setTasks(projectDetailsData?.tasks)
-    }, [projectDetailsData])
+        setProjectDetails(projectDetailsList?.data)
+        setTasks(projectDetailsList?.tasks)
+    }, [projectDetailsList])
 
     const handleChange = (e) => {
 
@@ -94,14 +120,6 @@ function EditProject() {
         })
     }
 
-    useEffect(() => {
-        if (projectID) {
-            const API_URL = `${config.api.baseUrl}/projects/${projectID}/`;
-            getProjectDetails(API_URL, "GET");
-            setMethod("GET")
-        }
-
-    }, [projectID, TaskDetails, DeletedTask, NewTask]);
 
 
     useEffect(() => {
@@ -113,8 +131,7 @@ function EditProject() {
 
     const handleTaskUpdate = (e) => {
         if (projectID) {
-            const API_URL = `${config.api.baseUrl}/projects/${projectID}/tasks/${selectedTask?.id}/`;
-            updateTask(API_URL, "PUT", selectedTask);
+            dispatch(updateTask({ projectId: projectID, taskId: selectedTask?.id, taskData: selectedTask }))
         }
         setShowModal(!showModal)
     }
@@ -122,8 +139,8 @@ function EditProject() {
     const handleDelete = (e) => {
 
         if (projectID) {
-            const API_URL = `${config.api.baseUrl}/projects/${projectID}/tasks/${selectedTask?.id}/`;
-            DeleteTask(API_URL, "DELETE", selectedTask);
+            dispatch(deleteTask({ projectId: projectID, taskId: selectedTask?.id }))
+            setLastAction('deleted');
         }
         setShowModal(!showModal)
 
@@ -159,14 +176,15 @@ function EditProject() {
         setShowModal(!showModal)
         setAction("Create")
 
+
     }
     const handleCreateTaskWithData = (data) => {
         let formulatedData = {
             ...data,
             status: data?.status ? data.status : "new"
         }
-        const API_URL = `${config.api.baseUrl}/projects/${parseInt(projectID)}/tasks/`;
-        createTask(API_URL, "POST", data);
+        dispatch(createTask({ projectId: projectID, taskData: formulatedData }))
+        setLastAction('created');
     }
 
     const getStatusBadgeClass = (status) => {
@@ -187,8 +205,7 @@ function EditProject() {
             ...Selectedproject,
             tasks: tasks
         };
-        const API_URL = `${config.api.baseUrl}/projects/${projectID}/`;
-        getProjectDetails(API_URL, "PUT", finalPayload);
+        dispatch(updateProject({ id: projectID, projectData: finalPayload }))
         setMethod("PUT")
         scrollToTop()
         navigate(`/dashboard`)
@@ -301,7 +318,7 @@ function EditProject() {
                             </div>
 
                             <div className="list-group mb-4">
-                                {projectDetails?.tasks?.map(task => (
+                                {TaskStateList?.map(task => (
                                     <a href="#" key={task.id} onClick={(e) => { e.preventDefault(); handleTaskClick(task); }} className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center ${selectedTask && selectedTask.id === task.id ? 'active' : ''}`}>
                                         <span>{task?.description}</span>
                                         <span className={`badge rounded-pill status-badge ${getStatusBadgeClass(task.status)}`}>{StatusObj[task.status]}</span>

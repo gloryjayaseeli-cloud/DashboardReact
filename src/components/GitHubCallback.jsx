@@ -1,45 +1,43 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import useApi from '../services/ApiService';
-import { useAuth } from '../context/AuthContext';
+
 import config from '../config/config';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUser, selectUserProfile } from '../features/user';
 
 
 export default function GitHubCallback() {
-  const { user, login, logout } = useAuth();
 
   const location = useLocation();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const hasSentRequest = useRef(false);
+  const loggedinUser = useSelector(selectUserProfile)
 
   const [token, setToken] = useState("")
-  const [loginuser, { data: loggedinUser, loginloading, loginerror }] = useApi();
-
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUserapi = async () => {
       if (token) {
         const API = `${config.api.baseUrl}/users/me/`
 
         try {
-          loginuser(API, "GET")
-      
+          dispatch(fetchUser())
+
         } catch (error) {
           localStorage.removeItem('token');
           setToken(null);
-     
         }
       }
- 
+
     };
 
-    fetchUser();
-  }, [token]); 
+    fetchUserapi();
+  }, [token]);
 
   useEffect(() => {
     localStorage.setItem("role", loggedinUser?.profile?.role)
     localStorage.setItem("userName", loggedinUser?.username)
-    login(loggedinUser?.username, token, loggedinUser?.profile?.role)
     loggedinUser?.username && navigate("/dashboard")
   }, [loggedinUser])
 
@@ -49,7 +47,7 @@ export default function GitHubCallback() {
     const code = new URLSearchParams(location.search).get('code');
 
     if (code && !hasSentRequest.current) {
-    
+
       hasSentRequest.current = true;
 
       fetch(`${config.api.baseUrl}/auth/github/`, {

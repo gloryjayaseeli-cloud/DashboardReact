@@ -1,22 +1,41 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom"
-import useApi from '../services/ApiService';
-import { useAuth } from '../context/AuthContext';
-import config from '../config/config';
-import { Spinner } from 'react-bootstrap';
+
 import AlertMessage from './AlertMessage';
+import { selectUserRole } from "../features/user";
+import { useSelector, useDispatch } from 'react-redux';
+import {
+    fetchProjects,
+    createProject,
+    deleteProject,
+    selectAllProjects,
+    selectProjectsStatus,
+    selectProjectError
+} from '../features/project';
+import { selectAuthToken } from '../features/auth';
+
+
 
 export default function ProjectDashboard() {
     const navigate = useNavigate()
-    const { role } = useAuth()
+    const role = useSelector(selectUserRole)
+    const user = localStorage.getItem("userName")
+    const status = useSelector(selectProjectsStatus);
+    const error = useSelector(selectProjectError);
+
+    const dispatch = useDispatch();
+    const projectList = useSelector(selectAllProjects);
+    const token = useSelector(selectAuthToken);
+    console.log("projlist", projectList)
+    useEffect(() => {
+        if (token) {
+            dispatch(fetchProjects());
+        }
+    }, [dispatch, token]);
+    const [deletingProjectId, setDeletingProjectId] = useState(null);
+
 
     const [projects, setProjects] = React.useState([]);
-
-    const [getProjects, { data: projectSet, loading, error }] = useApi();
-    const [getUsers, { data: UserList, UserLoading, UserError }] = useApi();
-    const API_URL = `${config.api.baseUrl}/projects/`
-    const [DeleteProjects, { data: Delprojects, loading:Delloading, error:Delerror }] = useApi();
-
 
     const [alert, setAlert] = useState({
         show: false,
@@ -25,38 +44,26 @@ export default function ProjectDashboard() {
     });
 
     useEffect(() => {
-
-        Delprojects && handleApiSuccess("project Deleted successfuly")
-
-      
-    }, [Delprojects])
-
-    useEffect(() => {
-
-        Delerror && handleApiError("project is not Deleted successfuly")
-
-
-    }, [Delerror])
-
-    useEffect(() => {
-        let UserAPI = `${config.api.baseUrl}/users/`
-        let data = getProjects(API_URL, "GET");
-        getUsers(UserAPI, "GET")
-
-    }, [Delprojects]);
-    useEffect(() => {
-        setProjects(projectSet)
-
-    }, [projectSet])
-    const user = localStorage.getItem("userName")
-    const handleDelete = (projectId) => {
-        let data = DeleteProjects(`${API_URL}${projectId}/`, "DELETE");
-        if (Delprojects?.message) {
-            setProjects(currentProjects =>
-                currentProjects.filter(project => project?.id !== projectId)
-            );
+        if (status === 'succeeded' && !projectList.some(p => p.id === deletingProjectId)) {
+            if (deletingProjectId) {
+                handleApiSuccess("Project deleted successfully");
+                setDeletingProjectId(null);
+            }
+        } else if (status === 'failed') {
+            handleApiError(error || "An unknown error occurred");
         }
+    }, [status, error, projectList]);
 
+    useEffect(() => {
+        setProjects(projectList)
+
+    }, [projectList])
+
+
+    const handleDelete = (projectId) => {
+        setDeletingProjectId(projectId);
+        dispatch(deleteProject(projectId));
+        scrollToTop()
     }
 
 
@@ -79,7 +86,7 @@ export default function ProjectDashboard() {
 
     const closeAlert = () => {
         setAlert({ ...alert, show: false });
-    
+
     };
 
     const scrollToTop = () => {
@@ -94,14 +101,8 @@ export default function ProjectDashboard() {
 
     return (
         <div>
-            {Delloading && (
-                <div className="loading-overlay">
-                    <Spinner animation="border" variant="light" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </Spinner>
-                </div>
-            )}
-              {alert.show && (
+
+            {alert.show && (
                 <AlertMessage
                     variant={alert.variant}
                     message={alert.message}
@@ -109,16 +110,25 @@ export default function ProjectDashboard() {
                 />
             )}
             <main className="container my-5">
+                {role === "admin" ? <h4> Projects List</h4> : <h4 className="h4 mb-0"  > Your Projects</h4>}
 
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                    { role ==="admin" ? <h4> projects list</h4>:<h4 className="h4 mb-0"  > Your Projects</h4>}
+                <div className="d-flex justify-content-end align-items-right mb-4">
                     {role === "admin" &&
-                        <button className="btn btn-violet d-flex align-items-center" onClick={() => {
-                            navigate("/projects")
-                        }}>
-                            <i className="bi bi-plus-lg me-2"></i>
-                            Create Project
-                        </button>
+                        <>
+                            <button className="btn btn-violet " style={{ margin: "10px" }} onClick={() => {
+                                navigate("/projects")
+                            }}>
+                                <i className="bi bi-plus-lg me-2"></i>
+                                Create Project
+                            </button>
+
+                            <button className="btn btn-violet d-flex" style={{ margin: "10px" }} onClick={() => {
+                                navigate("/admin")
+                            }}>
+                                <i className="bi bi-plus-lg me-2"></i>
+                                Manage Users
+                            </button>
+                        </>
                     }
                 </div>
 

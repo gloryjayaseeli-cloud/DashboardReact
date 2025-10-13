@@ -10,15 +10,19 @@ import { useState } from 'react';
 import NavBar from './components/NavBar';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import GitHubCallback from "./components/GitHubCallback"
-import { useAuth } from './context/AuthContext';
-import { AuthProvider } from './components/AuthProvider';
+import { selectUsername, selectUserStatus, selectUserError } from '../src/features/user';
+import ManageUsers from '../src/components/ManageUsers';
+import { useSelector } from 'react-redux';
 
 function App() {
     const [route, setRoute] = useState('home');
     const AppContent = () => {
-        const { user } = useAuth();
 
-        const isProtectedRoute = ['dashboard', 'projects', 'tasks'].includes(route);
+        const user = useSelector(selectUsername);
+        const userStatus = useSelector(selectUserStatus)
+        const userError = useSelector(selectUserError)
+
+        const isProtectedRoute = ['dashboard', 'projects', 'tasks', "admin"].includes(route);
         if (isProtectedRoute && !user) {
             return <AuthPage />;
         }
@@ -37,6 +41,7 @@ function App() {
                         <Route path="/login" element={<AuthPage />} />
                         <Route path="/dashboard" element={<ProjectDashboard />} />
                         <Route path="/projects" element={<CreateProject />} />
+                        <Route path="/admin" element={<ManageUsers />} />
                         <Route path="/AddTaskPage/:projectID/:ProjectName" element={<AddTaskPage />} />
                         <Route path="/viewProject/:projectID" element={<ViewProject />} />
                         <Route path="/editProject/:projectID" element={<EditProject />} />
@@ -49,20 +54,20 @@ function App() {
     };
 
     return (
-        <AuthProvider>
-            <div className="min-h-screen bg-gray-100 font-sans">
-                <NavBar
-                    user=""
-                />
-                <main >
-                    <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-                        <div className="px-4 py-6 sm:px-0">
-                            <AppContent />
-                        </div>
+
+        <div className="min-h-screen bg-gray-100 font-sans">
+            <NavBar
+                user=""
+            />
+            <main >
+                <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                    <div className="px-4 py-6 sm:px-0">
+                        <AppContent />
                     </div>
-                </main>
-            </div>
-        </AuthProvider>
+                </div>
+            </main>
+        </div>
+
     );
 
 }

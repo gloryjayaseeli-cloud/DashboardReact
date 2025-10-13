@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
-import useApi from '../services/ApiService';
 import { useNavigate } from 'react-router-dom';
-import config from '../config/config';
 import AlertMessage from './AlertMessage';
 import { Container, Button, Card, Spinner, Row, Col } from 'react-bootstrap';
-
+import {
+    createProject, selectAllProjects, selectProjectDetails, selectProjectError,
+    selectProjectsStatus
+} from '../features/project';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUserRole, selectUserStatus, selectUserError } from '../features/user';
 
 function CreateProject() {
     const user = localStorage.getItem("userName")
@@ -12,6 +15,11 @@ function CreateProject() {
     const [taskInput, setTaskInput] = useState('');
     const [selectedTask, setSelectedTask] = useState(null);
     const [loading, setLoading] = useState(false)
+
+    const userStatus = useSelector(selectUserStatus)
+    const userError = useSelector(selectUserError)
+    const ProjectStatus = useSelector(selectProjectsStatus)
+    const ProjectError = useSelector(selectProjectError)
 
     const [project, setProject] = useState({
         owner: user,
@@ -21,8 +29,9 @@ function CreateProject() {
         end_date: ""
     })
     const navigate = useNavigate()
-    const [CreateProject, { data: NewProject, loading: projectloading, error: projecterror }] = useApi();
-
+    const projectDetailsList = useSelector(selectAllProjects)
+    const role = useSelector(selectUserRole)
+    const dispatch = useDispatch();
 
     const [alert, setAlert] = useState({
         show: false,
@@ -30,18 +39,20 @@ function CreateProject() {
         variant: 'info'
     });
     useEffect(() => {
-
-        NewProject && handleApiSuccess("project created successfully")
-
-        setLoading(false)
-    }, [NewProject])
+        if (ProjectStatus === "loading" || userStatus === "loading") {
+            setLoading(true)
+        }
+        if (ProjectStatus === "succeeded" || userStatus === "succeeded" || projectDetailsList) {
+            setLoading(false)
+        }
+    }, [ProjectStatus, userStatus, projectDetailsList])
 
     useEffect(() => {
-
-        projecterror && handleApiError("project is not created successfully")
-
-        setLoading(false)
-    }, [projecterror])
+        if (ProjectStatus === "failed") {
+            (ProjectError || userError) && handleApiError("project is not created successfully")
+            setLoading(false)
+        }
+    }, [ProjectError, userError, ProjectStatus])
 
     const handleChange = (e) => {
         setProject((prev) => {
@@ -55,15 +66,12 @@ function CreateProject() {
     const handleSubmit = (e) => {
         e.preventDefault();
         scrollToTop()
-        setLoading(true)
-
         const finalPayload = {
             ...project,
             tasks: tasks
         };
-
-        const API_URL = `${config.api.baseUrl}/projects/`;
-        CreateProject(API_URL, "POST", finalPayload);
+        dispatch(createProject(finalPayload))
+        navigate("/dashboard")
     };
 
 

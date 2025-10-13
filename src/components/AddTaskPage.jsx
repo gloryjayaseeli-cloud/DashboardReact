@@ -1,12 +1,15 @@
 import { React, useState } from "react";
-import useApi from "../services/ApiService";
 import { useParams } from "react-router-dom";
 import config from "../config/config";
+import { useDispatch } from 'react-redux';
+import { createTask } from '../features/task';
+
 
 const AddTaskPage = () => {
 
     const user = localStorage.getItem("userName")
     const [status, setStatus] = useState('');
+    const dispatch = useDispatch();
 
     const { projectID, ProjectName } = useParams();
     const [task, setTask] = useState({
@@ -24,8 +27,6 @@ const AddTaskPage = () => {
         'new': "New",
         'not_started': "Not Started"
     }
-    const [createTask, { data: NewTask, loading, error }] = useApi();
-
     const getStatusClass = (currentStatus) => {
         switch (currentStatus) {
 
@@ -40,8 +41,7 @@ const AddTaskPage = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        const API_URL = `${config.api.baseUrl}/projects/${parseInt(projectID)}/tasks/`;
-        createTask(API_URL, "POST", task);
+        dispatch(createTask({ projectId: projectID, taskData: task }))
     };
 
     const handleChange = (e) => {
