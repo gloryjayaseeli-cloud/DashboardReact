@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import config from '../config/config';
+import config from '../../config/config';
 
 const API_URL = `${config.api.baseUrl}/projects/`;
 export const createProject = createAsyncThunk(

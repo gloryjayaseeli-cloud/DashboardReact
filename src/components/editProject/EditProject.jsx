@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
-import Popup from './popup';
-import AlertMessage from './AlertMessage';
+import Popup from '../popup/popup';
+import AlertMessage from '../alertMessage/AlertMessage';
 import { Spinner } from 'react-bootstrap';
 import {
     viewProjectDetails, selectProjectDetails,
     selectProjectsStatus,
     selectProjectError,
     updateProject
-} from '../features/project';
+} from '../../features/ProjectSlice/project';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUserRole } from '../features/user';
+import { selectUserRole } from '../../features/UserSlice/user';
 import { React } from 'react';
-import { createTask, deleteTask, selectAllTasks, updateTask, selectTaskError, selectTasksStatus } from '../features/task';
+import { createTask, deleteTask, selectAllTasks, updateTask, selectTaskError, selectTasksStatus } from '../../features/taskSlice/task';
 
 function EditProject() {
     const user = localStorage.getItem("userName")
@@ -21,7 +21,6 @@ function EditProject() {
     const [selectedTask, setSelectedTask] = useState(null);
     const navigate = useNavigate()
     const [projectDetails, setProjectDetails] = useState()
-    // const [getProjectDetails, { data: projectDetailsData, loading, error }] = useApi();
     const [Selectedproject, setSelectedproject] = useState({})
     const [method, setMethod] = useState("")
     const projectDetailsList = useSelector(selectProjectDetails)
@@ -267,17 +266,19 @@ function EditProject() {
                             <path fillRule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
                         </svg>
                     </button>
-                    <h4 style={{ textAlign: 'center' }}>Edit Your project details</h4>
+                    <h5 style={{ textAlign: 'center' }}>Edit Your project details</h5>
                 </div>
                 <div className="card form-card shadow-sm">
                     <div className="card-body p-4 p-lg-5">
-                        <h4 className="h4 text-center mb-4">Edit Project</h4>
+                     
 
                         <div className="row g-4">
 
+                            <div className='col-6'>
+
                             <div className="col-12">
-                                <label className="form-label">Project Name</label>
-                                <input type="text" className="form-control" id="projectName" name="name" onChange={(e) => handleChange(e)} value={Selectedproject?.name} placeholder="e.g., Project Phoenix" required />
+                                <label htmlFor='name' className="form-label">Project Name</label>
+                                <input type="text" className="form-control" id="name" name="name" onChange={(e) => handleChange(e)} value={Selectedproject?.name} placeholder="e.g., Project Phoenix" required />
                             </div>
 
 
@@ -302,13 +303,11 @@ function EditProject() {
                                 <input type="text" className="form-control" id="owner" name="owner" onChange={(e) => handleChange(e)} value={Selectedproject?.owner} placeholder="e.g., Alice Johnson" required />
                             </div>
 
-                            <div className="col-12">
-                                <hr />
                             </div>
-
+                            <div className='col-6'>
 
                             <div className="d-flex justify-content-between align-items-center mb-3">
-                                <h2 className="h4 mb-0">Project Tasks</h2>
+                                <h2 className="h4 mb-0">Tasks</h2>
                                 <button className="btn btn-violet" onClick={(e) => {
                                     e.preventDefault();
                                     handleCreateTask()
@@ -325,9 +324,9 @@ function EditProject() {
                                     </a>
                                 ))}
                             </div>
-
-                            <div className="col-12 text-center mt-4">
-                                <button type="submit" className="btn btn-violet px-5 py-2" onClick={(e) => {
+                                </div>
+                            <div className="d-flex justify-content-end">
+                                <button type="submit" className="bgbtn2" onClick={(e) => {
                                     handleSubmit(e)
                                 }}>
                                     Edit Project

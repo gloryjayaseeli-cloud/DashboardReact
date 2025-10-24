@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import AlertMessage from './AlertMessage';
+import AlertMessage from '../alertMessage/AlertMessage';
 import { Container, Button, Card, Spinner, Row, Col } from 'react-bootstrap';
 import {
     createProject, selectAllProjects, selectProjectDetails, selectProjectError,
     selectProjectsStatus
-} from '../features/project';
+} from '../../features/ProjectSlice/project';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUserRole, selectUserStatus, selectUserError } from '../features/user';
+import { selectUserRole, selectUserStatus, selectUserError } from '../../features/UserSlice/user';
 
 function CreateProject() {
     const user = localStorage.getItem("userName")

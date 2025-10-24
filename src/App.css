@@ -204,119 +204,129 @@ body {
   font-weight: 500;
 }
 
-.a1, .a1:hover {
+.a1,
+.a1:hover {
   text-decoration: none !important;
- 
+
 }
-.a1{
-   color: white !important;
+
+.a1 {
+  color: white !important;
 }
-.a1:hover{
+
+.a1:hover {
   color: black;
 }
 
 
 
-    .page-wrapper {
-      transition: filter 0.5s ease-in-out;
-    }
+.page-wrapper {
+  transition: filter 0.5s ease-in-out;
+}
 
-   
-    .header-section {
-      background-color: #ffffff;
-      border: 1px solid #dee2e6;
-    }
 
-    .header-title {
-      color: #5E35B1; 
-      font-weight: 700;
-    }
+.header-section {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+}
 
-    .content-card {
-      border: none;
-      border-radius: 0.75rem;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    }
+.header-title {
+  color: #5E35B1;
+  font-weight: 700;
+}
 
-    .content-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(94, 53, 177, 0.1); 
-    }
+.content-card {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
 
-    .card-title-custom {
-      color: #343a40; 
-      font-weight: 600;
-    }
+.content-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(94, 53, 177, 0.1);
+}
 
-    .scroll-to-top-btn {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      z-index: 100;
-      width: 55px;
-      height: 55px;
-      border-radius: 50%;
-      background-color: #5E35B1; /* Main Purple Color */
-      border: none;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 0;
-      transition: background-color 0.2s ease, transform 0.2s ease;
-    }
+.card-title-custom {
+  color: #343a40;
+  font-weight: 600;
+}
 
-    .scroll-to-top-btn:hover {
-      background-color: #512DA8; 
-      transform: scale(1.1);
-    }
+.scroll-to-top-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 100;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background-color: #5E35B1;
+  /* Main Purple Color */
+  border: none;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
 
-    .scroll-to-top-btn:focus, .scroll-to-top-btn:active {
-      background-color: #512DA8;
-      box-shadow: 0 0 0 0.25rem rgba(94, 53, 177, 0.5);
-    }
+.scroll-to-top-btn:hover {
+  background-color: #512DA8;
+  transform: scale(1.1);
+}
 
-    .content-blur .page-wrapper {
-      filter: blur(8px);
-      -webkit-filter: blur(8px); 
-      pointer-events: none;
-      user-select: none;
-    }
+.scroll-to-top-btn:focus,
+.scroll-to-top-btn:active {
+  background-color: #512DA8;
+  box-shadow: 0 0 0 0.25rem rgba(94, 53, 177, 0.5);
+}
 
-    .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(0, 0, 0, 0.5); 
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1050; 
-    }
+.content-blur .page-wrapper {
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+}
 
-   
-    .loading-overlay .spinner-border {
-      width: 3.5rem;
-      height: 3.5rem;
-    }
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
 
-            .table {
-            border-radius: 0.75rem;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .table thead {
-            background-color: #6f42c1;
-            color: white;
-        }
-        .table tbody tr:hover {
-            background-color: #f1f1f1;
-        }
-        .form-select {
-            border-radius: 0.5rem;
-        }
-        
 
+.loading-overlay .spinner-border {
+  width: 3.5rem;
+  height: 3.5rem;
+}
+
+.table {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table thead {
+  background-color: #6f42c1;
+  color: white;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.form-select {
+  border-radius: 0.5rem;
+}
+
+.capitalize-first::first-letter {
+  text-transform: uppercase !important;
+}

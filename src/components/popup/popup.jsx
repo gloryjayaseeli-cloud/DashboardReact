@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { selectUserRole } from '../features/user';
+import { selectUserRole } from '../../features/UserSlice/user';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteTask, updateTask } from '../features/task';
+import { deleteTask, updateTask } from '../../features/taskSlice/task';
 
 
 const Modal = ({ show, onHide, children }) => {
@@ -87,9 +87,7 @@ function Popup(props) {
 
     const EditorhandleTaskUpdate = (e) => {
         if (projectID) {
-            // const API_URL = `${config.api.baseUrl}/projects/${projectID}/tasks/${editordata?.id}/`;
-            // updateTask(API_URL, "PUT", editordata);
-            dispatch(updateTask({ projectId: projectID, taskId: editordata?.id, taskData: editordata }))
+           dispatch(updateTask({ projectId: projectID, taskId: editordata?.id, taskData: editordata }))
 
 
         }
@@ -307,7 +305,7 @@ function Popup(props) {
 
                                     <div className="row-lg-3">
                                         <label htmlFor="description" className="form-label">Task Description</label>
-                                        <textarea className="form-control" id="taskDescription" name="description" onChange={handleChange} value={task?.description} rows="3" placeholder="Add a more detailed description..."></textarea>
+                                        <textarea className="form-control" id="description" name="description" onChange={handleChange} value={task?.description} rows="3" placeholder="Add a more detailed description..."></textarea>
                                     </div>
                                     <div className="row-md-6">
                                         <label htmlFor="status" className="form-label">Status</label>

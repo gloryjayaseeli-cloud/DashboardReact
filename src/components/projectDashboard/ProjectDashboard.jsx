@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom"
 
-import AlertMessage from './AlertMessage';
-import { selectUserRole } from "../features/user";
+import AlertMessage from '../alertMessage/AlertMessage';
+import { selectUserRole } from "../../features/UserSlice/user";
 import { useSelector, useDispatch } from 'react-redux';
 import {
     fetchProjects,
@@ -11,8 +11,8 @@ import {
     selectAllProjects,
     selectProjectsStatus,
     selectProjectError
-} from '../features/project';
-import { selectAuthToken } from '../features/auth';
+} from '../../features/ProjectSlice/project';
+import { selectAuthToken } from '../../features/Authslice/auth';
 
 
 
@@ -78,7 +78,7 @@ export default function ProjectDashboard() {
     const handleApiError = (msg) => {
         setAlert({
             show: true,
-            message: `${msg} ❌`,
+            message: `Something is wrong ❌`,
             variant: 'danger'
         });
     };
@@ -140,8 +140,8 @@ export default function ProjectDashboard() {
                         <div className="col-lg-4 col-md-6" key={project?.id}>
                             <div className="card project-card h-100 shadow-sm">
                                 <div className="card-body d-flex flex-column">
-                                    <h5 className="card-title fw-bold text-dark">{project?.name}</h5>
-                                    <p className="card-text text-muted flex-grow-1">{project?.description}</p>
+                                    <h5 className="card-title fw-bold text-dark capitalize-first">{project?.name}</h5>
+                                    <p className="card-text text-muted flex-grow-1 capitalize-first">{project?.description}</p>
 
                                     <div className="row small text-muted my-3">
                                         <div className="col">
@@ -159,7 +159,7 @@ export default function ProjectDashboard() {
                                                 <div className="rounded-circle d-flex align-items-center justify-content-center owner-avatar fw-bold me-2">
                                                     {project?.owner[0].toUpperCase()}
                                                 </div>
-                                                <span className="fw-medium">{project?.owner}</span>
+                                                <span className="fw-medium capitalize-first">{project?.owner}</span>
                                             </div>
                                         </div>
 

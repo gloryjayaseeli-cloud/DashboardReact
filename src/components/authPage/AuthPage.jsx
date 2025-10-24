@@ -3,11 +3,11 @@ import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
 import { FaGoogle, FaGithub, FaFacebook } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
-import AlertMessage from './AlertMessage';
+import AlertMessage from '../alertMessage/AlertMessage';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser, registerUser } from '../features/auth';
-import { fetchUser, selectUserProfile, selectUserStatus, selectUserError } from '../features/user';
-import { selectIsAuthenticated, selectAuthStatus } from '../features/auth';
+import { loginUser, registerUser } from '../../features/Authslice/auth';
+import { fetchUser, selectUserProfile, selectUserStatus, selectUserError } from '../../features/UserSlice/user';
+import { selectIsAuthenticated, selectAuthStatus } from '../../features/Authslice/auth';
 
 const AuthPage = () => {
   const dispatch = useDispatch();

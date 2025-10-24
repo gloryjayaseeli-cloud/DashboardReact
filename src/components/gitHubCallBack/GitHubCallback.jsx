@@ -2,9 +2,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import config from '../config/config';
+import config from '../../config/config';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUser, selectUserProfile } from '../features/user';
+import { fetchUser, selectUserProfile } from '../../features/UserSlice/user';
 
 
 export default function GitHubCallback() {

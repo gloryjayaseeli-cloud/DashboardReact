@@ -1,8 +1,8 @@
 import { React, useState } from "react";
 import { useParams } from "react-router-dom";
-import config from "../config/config";
+import config from "../../config/config";
 import { useDispatch } from 'react-redux';
-import { createTask } from '../features/task';
+import { createTask } from '../../features/taskSlice/task';
 
 
 const AddTaskPage = () => {
@@ -63,7 +63,7 @@ const AddTaskPage = () => {
                         <div className="row g-4">
 
                             <div className="col-12">
-                                <label htmlFor="description" className="form-label">Task Description</label>
+                                <label htmlFor="taskDescription" className="form-label">Task Description</label>
                                 <textarea className="form-control" id="taskDescription" name="description" onChange={handleChange} value={task?.description} rows="3" placeholder="Add a more detailed description..."></textarea>
                             </div>
                             <div className="col-md-6">
@@ -89,7 +89,7 @@ const AddTaskPage = () => {
                             </div>
 
                             <div className="col-md-6">
-                                <label htmlFor="dueDate" className="form-label">Due Date</label>
+                                <label htmlFor="due_date" className="form-label">Due Date</label>
                                 <input type="date" className="form-control" id="due_date" name="due_date" onChange={handleChange} value={task?.due_date} required />
                             </div>
 

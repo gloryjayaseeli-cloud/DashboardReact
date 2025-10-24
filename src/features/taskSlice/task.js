@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import config from '../config/config';
-import { viewProjectDetails } from './project';
+import config from '../../config/config';
+import { viewProjectDetails } from '../ProjectSlice/project';
 
 const API_URL = `${config.api.baseUrl}/projects/`;
 

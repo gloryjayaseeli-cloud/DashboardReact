@@ -1,10 +1,10 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import authReducer from '../features/auth';
-import userReducer from '../features/user';
-import projectReducer from "../features/project";
-import taskReducer from "../features/task"
+import authReducer from '../features/Authslice/auth';
+import userReducer from '../features/UserSlice/user';
+import projectReducer from "../features/ProjectSlice/project";
+import taskReducer from "../features/taskSlice/task"
 
 
 const persistConfig = {

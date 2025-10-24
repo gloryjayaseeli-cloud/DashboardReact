@@ -1,17 +1,17 @@
 import logo from './logo.svg';
 import './App.css';
-import AuthPage from "./components/AuthPage"
-import ProjectDashboard from './components/ProjectDashboard';
-import ViewProject from './components/ViewProject';
-import AddTaskPage from './components/AddTaskPage';
-import CreateProject from "./components/CreateProject"
-import EditProject from './components/EditProject';
+import AuthPage from "./components/authPage/AuthPage"
+import ProjectDashboard from './components/projectDashboard/ProjectDashboard';
+import ViewProject from './components/viewProject/ViewProject';
+import AddTaskPage from './components/addTask/AddTaskPage';
+import CreateProject from "./components/createProject/CreateProject"
+import EditProject from './components/editProject/EditProject';
 import { useState } from 'react';
-import NavBar from './components/NavBar';
+import NavBar from './components/Navbar/NavBar';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import GitHubCallback from "./components/GitHubCallback"
-import { selectUsername, selectUserStatus, selectUserError } from '../src/features/user';
-import ManageUsers from '../src/components/ManageUsers';
+import GitHubCallback from "./components/gitHubCallBack/GitHubCallback"
+import { selectUsername, selectUserStatus, selectUserError } from '../src/features/UserSlice/user';
+import ManageUsers from '../src/components/manageUser/ManageUsers';
 import { useSelector } from 'react-redux';
 
 function App() {
@@ -29,25 +29,23 @@ function App() {
         return (
             <>
 
-                <BrowserRouter>
-                    <Routes>
+                <Routes>
 
-                        <Route
-                            path="/login/github/callback"
-                            element={<GitHubCallback />}
-                        />
+                    <Route
+                        path="/login/github/callback"
+                        element={<GitHubCallback />}
+                    />
 
-                        <Route path="/" element={<AuthPage />} />
-                        <Route path="/login" element={<AuthPage />} />
-                        <Route path="/dashboard" element={<ProjectDashboard />} />
-                        <Route path="/projects" element={<CreateProject />} />
-                        <Route path="/admin" element={<ManageUsers />} />
-                        <Route path="/AddTaskPage/:projectID/:ProjectName" element={<AddTaskPage />} />
-                        <Route path="/viewProject/:projectID" element={<ViewProject />} />
-                        <Route path="/editProject/:projectID" element={<EditProject />} />
+                    <Route path="/" element={<AuthPage />} />
+                    <Route path="/login" element={<AuthPage />} />
+                    <Route path="/dashboard" element={<ProjectDashboard />} />
+                    <Route path="/projects" element={<CreateProject />} />
+                    <Route path="/admin" element={<ManageUsers />} />
+                    <Route path="/AddTaskPage/:projectID/:ProjectName" element={<AddTaskPage />} />
+                    <Route path="/viewProject/:projectID" element={<ViewProject />} />
+                    <Route path="/editProject/:projectID" element={<EditProject />} />
 
-                    </Routes>
-                </BrowserRouter>
+                </Routes>
 
             </>
         );

@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application Root should render the App with all the required providers in the correct order 1`] = `
+Object {
+  "$$typeof": Symbol(react.transitional.element),
+  "_owner": null,
+  "_store": Object {},
+  "key": null,
+  "props": Object {
+    "children": Object {
+      "$$typeof": Symbol(react.transitional.element),
+      "_owner": null,
+      "_store": Object {},
+      "key": null,
+      "props": Object {
+        "children": Object {
+          "$$typeof": Symbol(react.transitional.element),
+          "_owner": null,
+          "_store": Object {},
+          "key": null,
+          "props": Object {
+            "children": Object {
+              "$$typeof": Symbol(react.transitional.element),
+              "_owner": null,
+              "_store": Object {},
+              "key": null,
+              "props": Object {
+                "children": Object {
+                  "$$typeof": Symbol(react.transitional.element),
+                  "_owner": null,
+                  "_store": Object {},
+                  "key": null,
+                  "props": Object {},
+                  "type": [Function],
+                },
+              },
+              "type": [Function],
+            },
+            "loading": null,
+            "persistor": Object {},
+          },
+          "type": [Function],
+        },
+        "store": Object {},
+      },
+      "type": [Function],
+    },
+  },
+  "type": Symbol(react.strict_mode),
+}
+`;

@@ -1,14 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import config from '../config/config';
+import config from './../../config/config';
+
 
 const API_URL = `${config.api.baseUrl}/`;
 
 const token = localStorage.getItem('token');
 
 const initialState = {
-  token: token ? token : null,
-  isAuthenticated: token ? true : false,
+  token: null,
+  isAuthenticated:false,
   status: 'idle',
   error: null,
 };
