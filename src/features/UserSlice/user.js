@@ -7,7 +7,7 @@ export const fetchUser = createAsyncThunk(
   'user/fetchUser',
   async (_, thunkAPI) => {
     try {
-      const token = thunkAPI.getState().auth.token;
+      const token = thunkAPI.getState().auth.token || localStorage.getItem("token")
 
       if (!token) {
         return thunkAPI.rejectWithValue('Authentication token not found!');
