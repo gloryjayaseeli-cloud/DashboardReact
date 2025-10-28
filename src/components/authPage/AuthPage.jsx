@@ -89,6 +89,7 @@ const AuthPage = () => {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
       handleApiError()
     } finally {
+      handleApiSuccess()
       setLoading(false);
     }
   };
@@ -115,7 +116,7 @@ const AuthPage = () => {
     setAlert({ ...alert, show: false });
   };
 
-  if (userStatus === 'loading') {
+  if (userStatus === 'loading'|| loading) {
     return <p>Loading profile...</p>;
   }
   return (<>

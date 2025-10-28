@@ -52,7 +52,7 @@ function EditUserModal({ show, handleClose, user, onSave, isLoading }) {
         role: formData.role,
       },
     };
-    
+    onSave(true)
     dispatch(setUserRole({ userId:formData.id, role: formData.role }));
     
   };
@@ -163,7 +163,7 @@ function ManageUsers() {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log("mmm", status1, error, roleChanges, justSaved, userList)
+    console.log("details", status1, error, roleChanges, justSaved, userList)
     if (status1 === 'succeeded') {
       if (justSaved) {
         handleApiSuccess("User role updated successfully");
@@ -174,15 +174,10 @@ function ManageUsers() {
     }
   }, [status1, error, roleChanges, justSaved, userList]);
 
-  const handleSave = (userId) => {
+  const handleSave = (statusAdded) => {
+       statusAdded &&  handleApiSuccess("User role updated successfully");
 
-    const newRole = roleChanges[userId];
 
-    if (newRole) {
-      setJustSaved(!justSaved)
-      setJustSavedUserId(userId);
-      dispatch(setUserRole({ userId, role: newRole }));
-    }
   };
 
 

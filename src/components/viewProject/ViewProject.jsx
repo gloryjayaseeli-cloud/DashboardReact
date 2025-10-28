@@ -2,10 +2,12 @@ import { React, useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import Popup from '../popup/popup';
 import {
-    viewProjectDetails, selectProjectDetails
+    viewProjectDetails, selectProjectDetails,
+    selectProjectsStatus
 } from '../../features/ProjectSlice/project';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUserRole } from '../../features/UserSlice/user';
+import { Spinner } from 'react-bootstrap';
 
 function ViewProject() {
     const role = useSelector(selectUserRole)
@@ -16,6 +18,7 @@ function ViewProject() {
     const [selectedTask, setSelectedTask] = useState({});
     const [showModal, setShowModal] = useState(false)
     const projectDetailsList = useSelector(selectProjectDetails)
+    const loading=useSelector(selectProjectsStatus)
     const dispatch = useDispatch();
     const StatusObj = {
         'completed': "Completed",
@@ -63,7 +66,15 @@ function ViewProject() {
     const navigate = useNavigate()
 
     return (
+        
         <div>
+             {loading==="loading" && (
+                <div className="loading-overlay">
+                    <Spinner animation="border" variant="light" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                </div>
+            )}
             <main className="container dashContainer my-5">
                 <div>
                     <button className={`btn btn-purple btn-icon`} onClick={() => { navigate(`/dashboard`) }}>
