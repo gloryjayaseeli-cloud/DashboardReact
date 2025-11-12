@@ -25,7 +25,7 @@ export default function ProjectDashboard() {
 
     const dispatch = useDispatch();
     const projectList = useSelector(selectAllProjects);
-    const token = useSelector(selectAuthToken);
+    const token = useSelector(selectAuthToken)|| localStorage.getItem("token")
     console.log("projlist", projectList)
     useEffect(() => {
         if (token) {
@@ -110,10 +110,10 @@ export default function ProjectDashboard() {
                 />
             )}
             <main className="container my-5">
-                {role === "admin" ? <h4> Projects List</h4> : <h4 className="h4 mb-0"  > Your Projects</h4>}
+                {role === "Admin" ? <h4> Projects List</h4> : <h4 className="h4 mb-0"  > Your Projects</h4>}
 
                 <div className="d-flex justify-content-end align-items-right mb-4">
-                    {role === "admin" &&
+                    {role === "Admin" &&
                         <>
                             <button className="btn btn-violet " style={{ margin: "10px" }} onClick={() => {
                                 navigate("/projects")
@@ -163,7 +163,7 @@ export default function ProjectDashboard() {
                                             </div>
                                         </div>
 
-                                        {role === "admin" && <button onClick={() => {
+                                        {role === "Admin" && <button onClick={() => {
                                             handleDelete(project?.id);
                                         }} className="btn btn-white">Delete</button>
                                         }

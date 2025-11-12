@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { selectUserRole } from '../../features/UserSlice/user';
+import { selectUsername, selectUserRole } from '../../features/UserSlice/user';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteTask, updateTask } from '../../features/taskSlice/task';
 
@@ -61,7 +61,7 @@ function Popup(props) {
     const { handleTaskChange } = props
     const task = props?.NewOnetask
     const setTask = props?.setNewOneTask
-    const user = localStorage.getItem("userName")
+    const user = useSelector(selectUsername)
     const { projectID } = useParams();
     const dispatch = useDispatch()
     const StatusObj = {
@@ -216,7 +216,7 @@ function Popup(props) {
 
                         </Modal.Body>
                     }
-                    {(props.action === "Edit" && role === "admin") ?
+                    {(props.action === "Edit" && role === "Admin") ?
                         <Modal.Body>
                             <h3>Assign task</h3>
                             <div className="card task-card bg-light mt-4">
@@ -256,10 +256,10 @@ function Popup(props) {
                             </div>
                         </Modal.Body>
                         :
-                        role !== "admin" && (<Modal.Body>
+                        (props.action === "Edit" && role === "TaskCreator") ? (<Modal.Body>
                             <div className="card task-card bg-light mt-4">
                                 <div className="card-body p-3">
-
+                                    
 
                                     <div className="row-lg-3">
                                         <label htmlFor="task-name" className="form-label">Task Description</label>
@@ -279,7 +279,51 @@ function Popup(props) {
                                     </div>
                                     <div className="row-lg-2">
                                         <label htmlFor="task-assignee" className="form-label">Owner</label>
-                                        <input type="text" className="form-control" id="task-assignee" name='owner' value={editordata?.owner} onChange={(e) => EditorhandleTaskChange(e)} />
+                                        <input type="text" className="form-control" id="task-assignee" name='owner' disabled={props?.projectDetails?.owner!==user} value={editordata?.owner} onChange={(e) => EditorhandleTaskChange(e)} />
+                                    </div>
+                                    <div className="row-lg-2">
+                                        <label htmlFor="task-due-date" className="form-label">Due Date</label>
+                                        <input type="date" className="form-control" id="task-due-date" name='due_date' value={editordata?.due_date} onChange={(e) => EditorhandleTaskChange(e)} />
+                                    </div>
+                                    <div className="row-lg-3 py-4 text-end align-self-end">
+                                        <button onClick={(e) => EditorhandleTaskUpdate(e)} className="btn btn-violet me-2">Update</button>
+                                       {(role==="TaskCreator" && props?.projectDetails?.owner===user) && 
+                                        <button onClick={(e) => EditorhandleDelete(e)} className="btn btn-outline-danger">Delete</button>
+                                       }
+                                    </div>
+
+                                </div>
+                            </div>
+                        </Modal.Body>
+                        )
+                        :
+                        (props.action === "Edit" && role === "Viewer") && (<Modal.Body>
+                            <div className="card task-card bg-light mt-4">
+                                <div className="card-body p-3">
+                                    
+
+                                    <div className="row-lg-3">
+                                        <label htmlFor="task-name" className="form-label">Task Description</label>
+                                        <input type="text" className="form-control" id="task-name" name='description' value={editordata?.description} onChange={(e) => EditorhandleTaskChange(e)} />
+                                    </div>
+                                    <div className="row-lg-2">
+                                        <label htmlFor="task-status" className="form-label">Status</label>
+                                        <select className="form-select" id="task-status" name='status' onChange={(e) => EditorhandleTaskChange(e)} value={editordata?.status} >
+
+                                            <option value="new" name="new">New</option>
+                                            <option name="not_stated" value="not_started">Not Started</option>
+                                            <option value="in_progress" name="in_progress">In Progress</option>
+                                            <option name="blocked" value="blocked">Blocked</option>
+                                            <option value="completed" name="completed">Completed</option>
+
+                                        </select>
+                                    </div>
+                                    <div className="row-lg-2">
+                                        <label htmlFor="task-assignee"  className="form-label">Owner</label>
+                                        <input type="text" className="form-control" id="task-assignee" name='owner' disabled={true} value={editordata?.owner} onChange={(e) => {
+                                        // EditorhandleTaskChange(e)
+
+                                        }} />
                                     </div>
                                     <div className="row-lg-2">
                                         <label htmlFor="task-due-date" className="form-label">Due Date</label>

@@ -10,7 +10,7 @@ export const createTask = createAsyncThunk(
   'tasks/createTask',
   async ({ projectId, taskData }, { getState, rejectWithValue }) => {
     try {
-      const token = getState().auth.token;
+      const token = getState().auth.token || localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const response = await axios.post(`${API_URL}${projectId}/tasks/`, taskData, config);
       return response.data;
@@ -24,7 +24,7 @@ export const fetchTasks = createAsyncThunk(
   'tasks/fetchTasks',
   async (projectId, { getState, rejectWithValue }) => {
     try {
-      const token = getState().auth.token;
+      const token = getState().auth.token || localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const response = await axios.get(`${API_URL}${projectId}/tasks/`, config);
       return response.data;
@@ -38,7 +38,7 @@ export const viewTaskDetails = createAsyncThunk(
   'tasks/viewTaskDetails',
   async ({ projectId, taskId }, { getState, rejectWithValue }) => {
     try {
-      const token = getState().auth.token;
+      const token = getState().auth.token || localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const response = await axios.get(`${API_URL}${projectId}/tasks/${taskId}/`, config);
       return response.data;
@@ -53,7 +53,7 @@ export const updateTask = createAsyncThunk(
   'tasks/updateTask',
   async ({ projectId, taskId, taskData }, { getState, rejectWithValue }) => {
     try {
-      const token = getState().auth.token;
+      const token = getState().auth.token || localStorage.getItem("token")
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const response = await axios.put(`${API_URL}${projectId}/tasks/${taskId}/`, taskData, config);
       return response.data;
@@ -67,7 +67,7 @@ export const deleteTask = createAsyncThunk(
   'tasks/deleteTask',
   async ({ projectId, taskId }, { getState, rejectWithValue }) => {
     try {
-      const token = getState().auth.token;
+      const token = getState().auth.token || localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
       await axios.delete(`${API_URL}${projectId}/tasks/${taskId}/`, config);
       return taskId;

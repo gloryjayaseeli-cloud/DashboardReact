@@ -35,7 +35,7 @@ export const fetchUserList = createAsyncThunk(
   'user/fetchUserList',
   async (_, thunkAPI) => {
     try {
-      const token = thunkAPI.getState().auth.token;
+      const token = thunkAPI.getState().auth.token || localStorage.getItem("token");
 
       if (!token) {
         return thunkAPI.rejectWithValue('Authentication token not found!');
@@ -63,7 +63,7 @@ export const setUserRole = createAsyncThunk(
   'user/setUserRole',
   async ({ userId, role }, { getState, rejectWithValue }) => {
     try {
-      const authToken = getState().auth.token;
+      const authToken = getState().auth.token || localStorage.getItem("token");
       if (!authToken) {
         return rejectWithValue('Admin token not found');
       }
@@ -75,7 +75,7 @@ export const setUserRole = createAsyncThunk(
         },
       };
 
-      const response = await axios.patch(`${API_URL}${userId}/set-role/`, { role }, config);
+      const response = await axios.patch(`${API_URL}${userId}/set-role/`, { groups:[role] }, config);
       return response.data;
     } catch (error) {
       const message =
@@ -146,7 +146,7 @@ export const selectUserError = (state) => state?.user?.error
 export const selectUsername = (state) => state.user?.profile?.username;
 export const selectUserList = (state) => state.user?.userList;
 
-export const selectUserRole = (state) => state.user?.profile?.profile?.role;
+export const selectUserRole = (state) => state.user?.profile?.groups[0];
 
 export default userSlice.reducer;
 

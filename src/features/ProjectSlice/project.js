@@ -7,7 +7,7 @@ export const createProject = createAsyncThunk(
   'projects/createProject',
   async (projectData, { getState, rejectWithValue }) => {
     try {
-      const token = getState().auth.token;
+      const token = getState().auth.token || localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const response = await axios.post(API_URL, projectData, config);
       return response.data;
@@ -21,7 +21,7 @@ export const fetchProjects = createAsyncThunk(
   'projects/fetchProjects',
   async (_, { getState, rejectWithValue }) => {
     try {
-      const token = getState().auth.token;
+      const token = getState().auth.token|| localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const response = await axios.get(API_URL, config);
       return response.data; 
@@ -36,7 +36,7 @@ export const updateProject = createAsyncThunk(
   async ({ id, projectData }, { getState, rejectWithValue }) => {
     try {
       console.log("updateProject", id,projectData)
-      const token = getState().auth.token;
+      const token = getState().auth.token|| localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const response = await axios.put(`${API_URL}${id}/`, projectData, config);
       return response.data; 
@@ -50,7 +50,7 @@ export const deleteProject = createAsyncThunk(
   'projects/deleteProject',
   async (projectId, { getState, rejectWithValue }) => {
     try {
-      const token = getState().auth.token;
+      const token = getState().auth.token|| localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
       await axios.delete(`${API_URL}${projectId}/`, config);
       return projectId;
@@ -64,7 +64,7 @@ export const viewProjectDetails = createAsyncThunk(
   'projects/viewProjectDetails',
   async (projectId, { getState, rejectWithValue }) => {
     try {
-      const token = getState().auth.token;
+      const token = getState().auth.token|| localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const response = await axios.get(`${API_URL}${projectId}/`, config);
       console.log("resss>>", response)

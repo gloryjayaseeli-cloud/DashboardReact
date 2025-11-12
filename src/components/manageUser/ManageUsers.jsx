@@ -17,7 +17,7 @@ function EditUserModal({ show, handleClose, user, onSave, isLoading }) {
     role: '',
     id:""
   });
-  const availableRoles = ['admin', 'member'];
+  const availableRoles = ['Admin', 'TaskCreator', 'Viewer'];
 
   useEffect(() => {
     console.log("id", user)
@@ -25,7 +25,7 @@ function EditUserModal({ show, handleClose, user, onSave, isLoading }) {
       setFormData({
         username: user.username,
         email: user.email,
-        role: user.profile.role,
+        role: user.groups,
         id:user.id
       });
     }
@@ -47,13 +47,14 @@ function EditUserModal({ show, handleClose, user, onSave, isLoading }) {
       ...user,
       username: formData.username,
       email: formData.email,
-      profile: {
-        ...user.profile,
-        role: formData.role,
-      },
+      groups: [
+       formData.role,
+      ],
     };
     onSave(true)
     dispatch(setUserRole({ userId:formData.id, role: formData.role }));
+    
+    handleClose()
     
   };
 
@@ -144,7 +145,7 @@ function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [roleChanges, setRoleChanges] = useState({});
   const [justSavedUserId, setJustSavedUserId] = useState(null);
-  const availableRoles = ['admin', 'member'];
+ const availableRoles = ['Admin', 'TaskCreator', 'Viewer'];
   const [role, setRole] = useState('member');
   const [justSaved, setJustSaved] = useState(false);
   const userList = useSelector(selectUserList);
@@ -176,6 +177,7 @@ function ManageUsers() {
 
   const handleSave = (statusAdded) => {
        statusAdded &&  handleApiSuccess("User role updated successfully");
+      
 
 
   };
@@ -224,7 +226,7 @@ function ManageUsers() {
 
 
   const handleCloseModal = () => {
-    if (status1 === 'loading') return;
+    // if (status1 === 'loading') return;
     setShowModal(false);
     setSelectedUser(null)
     dispatch(fetchUserList())
@@ -284,14 +286,6 @@ function ManageUsers() {
               </tr>
             </thead>
             <tbody>
-             {status1 === 'loading' && !users.length && (
-                <tr>
-                  <td colSpan="4" className="text-center">
-                    <Spinner animation="border" variant="purple" />
-                    <span className="ms-2">Loading users...</span>
-                  </td>
-                </tr>
-              )}
 
              {status1 === 'failed' && !users.length && (
                 <tr>
@@ -316,7 +310,7 @@ function ManageUsers() {
                       <span
                        
                       >
-                        {user?.profile?.role}
+                        {user?.groups[0]}
                       </span>
                     </td>
                   </tr>
