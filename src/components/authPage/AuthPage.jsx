@@ -35,8 +35,9 @@ const AuthPage = () => {
   const [errors, setError] = useState("")
   const [loading, setLoading] = useState("")
   const navigate = useNavigate()
-
-  const gitUrl = process.env.REACT_APP_GITHUB_AUTH_URL
+  const gitUrl = `${process.env.REACT_APP_GITHUB_AUTH_URL}&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&scope=read:user,user:email`
+  const gitSignUpUrl= `${process.env.REACT_APP_GITHUB_AUTH_URL}&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&scope=read:user,user:email&prompt=login`
+ 
   useEffect(() => {
     setError(error)
     console.log(error)
@@ -221,10 +222,16 @@ const AuthPage = () => {
 
           <div className="d-grid">
             <button className="btn btn-violet">
-
-              <a className='a1' href={gitUrl}>
+                   {!isSignUp ? <a className='a1' href={gitUrl}>
                 <span>Continue with Github</span>
               </a>
+               : <a className='a1' href={gitSignUpUrl}>
+                <span>Continue with Github to signup</span>
+              </a>
+               }
+              {/* <a className='a1' href={gitUrl}>
+                <span>Continue with Github</span>
+              </a> */}
             </button>
           </div>
 
